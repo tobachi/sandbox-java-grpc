@@ -1,0 +1,54 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
+    }
+}
+
+plugins {
+    id "com.google.protobuf" version "0.8.12"
+    id "java"
+    id "idea"
+}
+
+repositories {
+    jcenter()
+}
+
+def grpcVersion = "1.28.0"
+def protobufVersion = "3.8.0"
+
+dependencies {
+    compile "io.grpc:grpc-netty:${grpcVersion}"
+    compile "io.grpc:grpc-protobuf:${grpcVersion}"
+    compile "io.grpc:grpc-stub:${grpcVersion}"
+    compile "com.google.protobuf:protobuf-java:${protobufVersion}"
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+// for IDEA
+sourceSets {
+    main {
+        java {
+            srcDirs "build/generated/source/proto/main/grpc"
+            srcDirs "build/generated/source/proto/main/java"
+        }
+    }
+}
